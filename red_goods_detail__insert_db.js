@@ -69,41 +69,40 @@ global.csj.red_goods_detail__insert_db.RedCrw = function () {
         return new Promise(function (resolve, reject) {
             logger.log('info', "-[S]-- read_dir");
 
-            var dataSelect = function ( db, callback ) {
+            var dataSelect = function (db, callback) {
 
-                db.collection( 'redgoodsdetails' ).find( {}, { _id : 1 }, {
-                    limit : 1,
-                    sort  : { _id : -1 }
-                } ).toArray( function ( err, docs ) {
-                    assert.equal( err, null );
-                    t.data_max_num = docs[ 0 ]._id + 1;
-                    callback( docs )
-                } );
+                db.collection('redgoodsdetails').find({}, {_id: 1}).toArray(function (err, docs) {
+                    assert.equal(err, null);
+                    var arr_c= docs.pop()
+                    console.log(arr_c)
+                    t.data_max_num = arr_c._id+1;
+                    callback(docs)
+                });
             };
 
-            MongoClient.connect( url, function ( err, db ) {
-                assert.equal( null, err );
-                dataSelect( db, function ( cb ) {
+            MongoClient.connect(url, function (err, db) {
+                assert.equal(null, err);
+                dataSelect(db, function (cb) {
                     db.close()
 
                     var path_1 = t.dataPath;
-                    var result = fs.readdirSync( path_1 );
+                    var result = fs.readdirSync(path_1);
 
-                    if(result == 0){
-                        logger.log( 'info', "--[I]-- process_run : ",result );
-                        logger.log( 'info', "-[E]-- process_run : ", new Date().toFormat( 'YYYYMMDDHH24MISS' ).substring( 0, 12 ) );
-                        logger.log( 'info', "==========================================================================================" );
+                    if (result == 0) {
+                        logger.log('info', "--[I]-- process_run : ", result);
+                        logger.log('info', "-[E]-- process_run : ", new Date().toFormat('YYYYMMDDHH24MISS').substring(0, 12));
+                        logger.log('info', "==========================================================================================");
                         process.exit(0)
-                    }else{
-                        logger.log( 'info', "--[I]-- read_dir__dataSelect_result : ", result[ 0 ] );
-                        _processStatus.filesCount = fs.readdirSync( _processStatus.dataPath + result[ 0 ] + "/" )
-                        logger.log( 'info', "--[I]-- read_dir__dataSelect_filesCount : ", _processStatus.filesCount );
-                        _processStatus.dataPath_dir = result[ 0 ];
-                        logger.log( 'info', "-[E]-- read_dir" );
+                    } else {
+                        logger.log('info', "--[I]-- read_dir__dataSelect_result : ", result[0]);
+                        _processStatus.filesCount = fs.readdirSync(_processStatus.dataPath + result[0] + "/")
+                        logger.log('info', "--[I]-- read_dir__dataSelect_filesCount : ", _processStatus.filesCount);
+                        _processStatus.dataPath_dir = result[0];
+                        logger.log('info', "-[E]-- read_dir");
                         resolve();
                     }
-                } );
-            } );
+                });
+            });
 
             // var path_1 = t.dataPath;
             // var result = fs.readdirSync(path_1);
@@ -120,7 +119,6 @@ global.csj.red_goods_detail__insert_db.RedCrw = function () {
     this.dataMakeJson = function (dir, data) {
         return new Promise(function (resolve, reject) {
 
-            var t = _processStatus;
 
             var contents = {};
 
@@ -130,48 +128,50 @@ global.csj.red_goods_detail__insert_db.RedCrw = function () {
             var dir = _processStatus.dataPath_dir;
             var path = _processStatus.dataPath
             var dirname = dir
-            var data = t.idx + '.txt'
-            var path_full_name = path + dirname + "/" + data
-            var text = fs.readFileSync(path_full_name, 'utf-8')
             var _id_c = 0
             var r = [];
             var r1 = [];
-            var contents = {}
             var dataMakeJson_func = function () {
 
 
                 if (t.idx < t.filesCount.length) {
                     logger.log('info', "-[S]-- dataMakeJson");
+                    var data = t.idx + '.txt'
+                    var path_full_name = path + dirname + "/" + data
+                    var text = fs.readFileSync(path_full_name, 'utf-8')
 
 
                     var regex = /<script([^'"]|"(\\.|[^"\\])*"|'(\\.|[^'\\])*')f.*?<\/script>/ig
                     var s = text.match(regex)
+                    if (s != null) {
+                        var page_data_json__string = s[0].replace("<script>facade(\'app-item/detail-page.js\', ", "")
+                        page_data_json__string = page_data_json__string.replace(");</script>", "")
+                        var page_data_json__obj = JSON.parse(page_data_json__string);
+                        date = new Date();
+                        contents = {}
+                        contents._id = t.data_max_num
+                        contents.data = page_data_json__obj.data
+                        contents.d_pub = {
+                            y: parseInt(date.getFullYear())
+                            , m: parseInt(date.getMonth() + 1)
+                            , d: parseInt(date.getDate())
+                            , ho: parseInt(date.getHours())
+                            , mi: parseInt(date.getMinutes())
+                            , se: parseInt(date.getSeconds())
+                        };
 
-                    var page_data_json__string = s[0].replace("<script>facade(\'app-item/detail-page.js\', ", "")
-                    page_data_json__string = page_data_json__string.replace(");</script>", "")
-                    var page_data_json__obj = JSON.parse(page_data_json__string);
-                    date = new Date();
-                    contents = {}
-                    contents._id = t.data_max_num
-                    contents.data = page_data_json__obj.data
-                    contents.d_pub = {
-                        y: parseInt(date.getFullYear())
-                        , m: parseInt(date.getMonth() + 1)
-                        , d: parseInt(date.getDate())
-                        , ho: parseInt(date.getHours())
-                        , mi: parseInt(date.getMinutes())
-                        , se: parseInt(date.getSeconds())
-                    };
+                        r.push(contents);
+                        if (r.length == 500 || t.idx == t.filesCount.length - 1) {
+                            r1.push(r);
+                            r = [];
+                        }
 
+                        logger.log('info', "--[I]-- dataMakeJson_idx : ", t.idx);
+                        logger.log('info', "-[E]-- dataMakeJson");
 
-                    r.push(contents);
-                    if (r.length == 500 || t.idx == t.filesCount.length - 1) {
-                        r1.push(r);
-                        t.DataResult = [];
+                    } else {
+                        logger.log('info', "--[I]-- dataMakeJson_idx : s == null");
                     }
-
-                    logger.log('info', "--[I]-- dataMakeJson_idx : ", t.idx);
-                    logger.log('info', "-[E]-- dataMakeJson");
                     ++t.data_max_num
                     ++t.idx
                     ++_id_c
@@ -186,7 +186,7 @@ global.csj.red_goods_detail__insert_db.RedCrw = function () {
     };
 
     this.db_insert = function (data) {
-console.log(data)
+        console.log(data)
         logger.log('info', "-[S]-- db_insert");
         return new Promise(function (resolve, reject) {
             var t = _processStatus;
@@ -298,14 +298,14 @@ console.log(data)
                 .catch(function (err) {
                     logger.log('error', "db_insert", err);
                 })
-                // .then( _this.copy_dir )
-                // .catch( function ( err ) {
-                //     logger.log( 'error', "copy_dir", err );
-                // } )
-                // .then( _this.remove_dir )
-                // .catch( function ( err ) {
-                //     logger.log( 'error', "remove_dir", err );
-                // } )
+                .then(_this.copy_dir)
+                .catch(function (err) {
+                    logger.log('error', "copy_dir", err);
+                })
+                .then(_this.remove_dir)
+                .catch(function (err) {
+                    logger.log('error', "remove_dir", err);
+                })
                 .then(function (result) {
                     db.close();
                     logger.log('info', "--[I]-- process_run : ", result);

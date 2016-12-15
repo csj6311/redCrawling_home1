@@ -157,7 +157,7 @@ global.csj.insertRedGoods.RedCrw = function () {
         return new Promise( function ( resolve, reject ) {
             logger.log( 'info', "-[S]-- readData_process__2" );
             var data_group_select = function ( db, callback ) {
-                db.collection( 'redgoods1' ).aggregate( [ { $group : { _id : "$prd_id" } } ], { allowDiskUse : true } ).toArray( function ( err, docs ) {
+                db.collection( 'redgoods2' ).aggregate( [ { $group : { _id : "$prd_id" } } ], { allowDiskUse : true } ).toArray( function ( err, docs ) {
                     if(err){logger.log( 'error', "readData_process__2____run_query", err )}
                     assert.equal( err, null );
                     callback( docs )
@@ -211,7 +211,7 @@ global.csj.insertRedGoods.RedCrw = function () {
                 logger.log( 'info', "--[I][S]-- readData_process__4__data_select" );
                 var dataSelect = function ( db, callback ) {
                     
-                    db.collection( 'redgoods1' ).find( { prd_id : t.data2[ t.loop1_idx ] } ).toArray( function ( err, docs ) {
+                    db.collection( 'redgoods2' ).find( { prd_id : t.data2[ t.loop1_idx ] } ).toArray( function ( err, docs ) {
                         if(err){logger.log( 'error', "readData_process__4__data_select____query", err )}
                         logger.log( 'info', "--[I][E]-- readData_process__4__data_select____loop1_idx : ",t.loop1_idx );
                         callback(docs)
