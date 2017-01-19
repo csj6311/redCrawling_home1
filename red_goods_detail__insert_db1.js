@@ -21,11 +21,11 @@ global._processStatus = {
 };
 
 var url = 'mongodb://49.175.149.94:9001/redData';
-global._processStatus.filesCount     = fs.readdirSync( global._processStatus.dataPath )
+global._processStatus.filesCount     = fs.readdirSync( global._processStatus.dataPath );
 
 var readDate = function () {
-    var t = global._processStatus
-    var r = t.DataResult
+    var t = global._processStatus;
+    var r = t.DataResult;
     
     if ( t.idx < t.filesCount.length ) {
         try {

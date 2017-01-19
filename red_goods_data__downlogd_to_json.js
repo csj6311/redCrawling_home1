@@ -384,12 +384,12 @@ global.csj.scrappingGoods.RedCrw = function ( data ) {
     var folderName = new Date().toFormat( 'YYYYMMDD' );
     var fileName = new Date().toFormat( 'YYYYMMDDHH24MISS' );
     var fileType = '.log';
-    var log_path_2 = '/red_goods_data__downlogd_to_json/'
-    var log_path_1 = '/goods'
-    var log_path_0 = '/logs';
+    //var log_path_2 = '/red_goods_data__downlogd_to_json/'
+    //var log_path_1 = '/goods'
+    //var log_path_0 = '/logs';
 
-    //var full_path = path.join( __dirname + log_path_0 + log_path_1 + log_path_2 )
-    var full_path = "d:/"
+    var full_path = "D:/work/redCrwData__1/logs/goods/red_goods_data__downlogd_to_json/"
+    //var full_path = "d:/"
     var logType = { info: 'info', err: 'err' };
 
     var a = fs.existsSync( path + folderName );

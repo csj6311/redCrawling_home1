@@ -221,10 +221,10 @@ process1()
     .catch( function ( err ) {
         console.log( err )
     } )
-    .then( process3 )
-    .catch( function ( err ) {
-        console.log( err )
-    } )
+    //.then( process3 )
+    //.catch( function ( err ) {
+    //   console.log( err )
+    //} )
     .then( process4 )
     .catch( function ( err ) {
         console.log( err )
