@@ -40,7 +40,7 @@ global.csj.scrappingGoods.RedCrw = function ( data ) {
     var winston = global.csj.STATIC.NPM_MODULE.winston;
     var dateUtils = global.csj.STATIC.NPM_MODULE.dateUtils;
     var path = global.csj.STATIC.NPM_MODULE.path;
-    var log  = global.csj.STATIC.NPM_MODULE.Logger;
+    var Logger  = global.csj.STATIC.NPM_MODULE.Logger;
 
     //--------------------------------------------------;
 
