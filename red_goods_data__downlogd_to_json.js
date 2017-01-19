@@ -40,8 +40,11 @@ global.csj.scrappingGoods.RedCrw = function ( data ) {
     var winston = global.csj.STATIC.NPM_MODULE.winston;
     var dateUtils = global.csj.STATIC.NPM_MODULE.dateUtils;
     var path = global.csj.STATIC.NPM_MODULE.path;
+    var log  = global.csj.STATIC.NPM_MODULE.Logger;
 
     //--------------------------------------------------;
+
+var logger = new Logger({ token:'54238e5e-fb23-486e-abe4-548cec7faec0' });
 
     //----------------------------------------------------------------------------------------------------;
 
@@ -113,7 +116,7 @@ global.csj.scrappingGoods.RedCrw = function ( data ) {
     _this.evt_Complete__reqData = function ( err, result ) {
         logger.log( 'info', "-[S]-- evt_Complete__reqData" );
         var t = _processStatus;
-        if ( err ) console.log( err );
+        if ( err ) log.log( err );
         if ( result.statusCode === 200 ) {
             try {
                 _this.reqData_processor( result );
@@ -379,65 +382,6 @@ global.csj.scrappingGoods.RedCrw = function ( data ) {
             }
         }
     }
-
-
-    var folderName = new Date().toFormat( 'YYYYMMDD' );
-    var fileName = new Date().toFormat( 'YYYYMMDDHH24MISS' );
-    var fileType = '.log';
-    //var log_path_2 = '/red_goods_data__downlogd_to_json/'
-    //var log_path_1 = '/goods'
-    //var log_path_0 = '/logs';
-
-    var full_path = "D:/work/redCrwData__1/logs/goods/red_goods_data__downlogd_to_json/"
-    //var full_path = "d:/"
-    var logType = { info: 'info', err: 'err' };
-
-    var a = fs.existsSync( path + folderName );
-    if ( a === false ) fs.mkdir( path + folderName, 0777 );
-    //logData 생성시 폴더및 파일명 생성;
-
-    var logger = new ( winston.Logger )(
-        {
-            transports: [
-                new ( winston.transports.Console )(
-                    {
-                        name: 'consoleLog'
-                        , colorize: false
-                        , timestamp: function () {
-                        return new Date().toFormat( 'YYYY-MM-DD HH24:MI:SS' );
-                    }
-                        , json: false
-                    }
-                )
-                , new ( winston.transports.File )(
-                    {
-                        name: 'infoLog'
-                        , level: 'info'
-                        , filename: full_path + fileName + '_' + logType.info + fileType
-                        , maxsize: 1000000
-                        , maxFiles: 100
-                        , timestamp: function () {
-                        return new Date().toFormat( 'YYYY-MM-DD HH24:MI:SS' );
-                    }
-                        , json: false
-                    }
-                )
-                , new ( winston.transports.File )(
-                    {
-                        name: 'errorLog'
-                        , level: 'error'
-                        , filename: full_path + fileName + '_' + logType.err + fileType
-                        , maxsize: 1000000
-                        , maxFiles: 100
-                        , timestamp: function () {
-                        return new Date().toFormat( 'YYYY-MM-DD HH24: MI : SS' );
-                    }
-                        , json: false
-                    }
-                )
-            ]
-        }
-    );
 
     /*-----------------------------------------------------------------------------------------------------------*/
     /*-----------------------------------------------------------------------------------------------------------*/
